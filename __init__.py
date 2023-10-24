@@ -36,22 +36,25 @@ class DeleteDisabledTracksOperator(bpy.types.Operator):
         start_frame = context.scene.frame_start
         end_frame = context.scene.frame_end
         
-        for tracking_object in clip.tracking.objects:
-            for track in tracking_object.tracks:
-                sframe = track.markers[0].frame
-                eframe = track.markers[-1].frame
-                if sframe <= start_frame and eframe >= end_frame:
-                    track.hide = True
+        if clip is None:
+            self.report({"ERROR"}, "There is no clip")
+        else:
+            for tracking_object in clip.tracking.objects:
+                for track in tracking_object.tracks:
+                    sframe = track.markers[0].frame
+                    eframe = track.markers[-1].frame
+                    if sframe <= start_frame and eframe >= end_frame:
+                        track.hide = True
 
-        bpy.ops.clip.select_all(action='SELECT')
-        bpy.ops.clip.delete_track()
-        bpy.ops.clip.hide_tracks_clear()            
+            bpy.ops.clip.select_all(action='SELECT')
+            bpy.ops.clip.delete_track()
+            bpy.ops.clip.hide_tracks_clear()            
         
         return {'FINISHED'}
 
 class DeleteDisabledTracksPanel(bpy.types.Panel):
     bl_label = "Delete Disabled Tracks"
-    bl_idname = "PT_DeleteDisabledTracksPanel"
+    bl_idname = "TOOL_PT_DeleteDisabledTracksPanel"
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Tool'
